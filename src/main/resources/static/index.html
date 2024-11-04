@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        table {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            border: 1px solid #000;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        td:hover {
+            background-color: #f0f0f0;
+        }
+        #message {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <table id="board"></table>
+    <button onclick="resetGame()">Reset Game</button>
+    <div id="message"></div>
+    
+    <script>
+        let board;
+        let currentPlayer;
+
+        function initializeGame() {
+            board = [
+                ['', '', ''],
+                ['', '', ''],
+                ['', '', '']
+            ];
+            currentPlayer = 'X';
+            document.getElementById('message').innerText = '';
+            fetchBoard();
+        }
+
+        function fetchBoard() {
+            const table = document.getElementById('board');
+            table.innerHTML = '';
+            board.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                row.forEach((cell, colIndex) => {
+                    const td = document.createElement('td');
+                    td.innerText = cell;
+                    td.onclick = () => makeMove(rowIndex, colIndex);
+                    tr.appendChild(td);
+                });
+                table.appendChild(tr);
+            });
+        }
+
+        function makeMove(row, col) {
+            if (board[row][col] === '' && !checkWinner()) {
+                board[row][col] = currentPlayer;
+                if (checkWinner()) {
+                    document.getElementById('message').innerText = `${currentPlayer} wins!`;
+                } else if (isBoardFull()) {
+                    document.getElementById('message').innerText = "It's a draw!";
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch player
+                }
+                fetchBoard();
+            }
+        }
+
+        function checkWinner() {
+            // Check rows, columns, and diagonals
+            for (let i = 0; i < 3; i++) {
+                if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
+                    return true;
+                }
+                if (board[0][i] && board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
+                    return true;
+                }
+            }
+            if (board[0][0] && board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+                return true;
+            }
+            if (board[0][2] && board[0][2] === board[1][1] && board[1][1] === board[2][0]) {
+                return true;
+            }
+            return false;
+        }
+
+        function isBoardFull() {
+            return board.flat().every(cell => cell !== '');
+        }
+
+        function resetGame() {
+            initializeGame();
+        }
+
+        // Start the game on page load
+        initializeGame();
+    </script>
+</body>
+</html>
